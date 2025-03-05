@@ -51,8 +51,20 @@ jobs:
 
       - name: Run iOS tests
         run: |
-          xcodebuild test \
-            -workspace iosApp.xcworkspace \
-            -scheme iosApp \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 14,OS=latest'
+          cd iosApp
+          if [ -d "iosApp.xcworkspace" ]; then
+            xcodebuild test \
+              -workspace iosApp.xcworkspace \
+              -scheme iosApp \
+              -sdk iphonesimulator \
+              -destination 'platform=iOS Simulator,name=iPhone 14,OS=latest'
+          elif [ -d "iosApp.xcodeproj" ]; then
+            xcodebuild test \
+              -project iosApp.xcodeproj \
+              -scheme iosApp \
+              -sdk iphonesimulator \
+              -destination 'platform=iOS Simulator,name=iPhone 14,OS=latest'
+          else
+            echo "No Xcode project or workspace found, skipping iOS tests."
+            exit 1
+          fi
