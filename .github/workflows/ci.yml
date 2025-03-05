@@ -68,7 +68,9 @@ jobs:
 
       - name: Authenticate with Google Cloud
         run: |
-          echo '${{ secrets.GCP_SA_KEY }}' > $HOME/gcloud-key.json
+          printf "%s" '${{ secrets.GCP_SA_KEY }}' > $HOME/gcloud-key.json
+          cat $HOME/gcloud-key.json
+          jq . $HOME/gcloud-key.json > /dev/null || { echo "Invalid JSON format"; exit 1; }
           gcloud auth activate-service-account --key-file=$HOME/gcloud-key.json
           gcloud config set project iconic-scholar-452807-h3
 
