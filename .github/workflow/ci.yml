@@ -45,7 +45,7 @@ jobs:
           cd iosApp
           pod install
 
-      - name: Run iOS tests
+      - name: Run iOS tests 
         run: |
           xcodebuild test \
             -workspace iosApp.xcworkspace \
