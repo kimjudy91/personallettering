@@ -52,6 +52,30 @@ jobs:
       - name: Find available scheme
         run: |
           cd iosApp
-          AVAILABLE_SCHEMES=$(xcodebuild -list | awk '/Schemes:/,/Targets:/' | tail -n +2 | head -n -1 | awk '{$1=$1;print}')
-          echo "Available Schemes: $AVAILABLE_SCHEMES"
-          echo "SCHEME_NAME=$(
+          AVAILABLE_SCHEMES=$(xcodebuild -list | awk '/Schemes:/ {found=1; next} found && NF' | head -n 1)
+          if [ -z "$AVAILABLE_SCHEMES" ]; then
+            echo "No available schemes found. Make sure the scheme is shared."
+            exit 1
+          fi
+          echo "Available Scheme: $AVAILABLE_SCHEMES"
+          echo "SCHEME_NAME=$AVAILABLE_SCHEMES" >> $GITHUB_ENV
+
+      - name: Run iOS tests
+        run: |
+          cd iosApp
+          if [ -d "iosApp.xcworkspace" ]; then
+            xcodebuild test \
+              -workspace iosApp.xcworkspace \
+              -scheme "$SCHEME_NAME" \
+              -sdk iphonesimulator \
+              -destination 'platform=iOS Simulator,name=iPhone 14,OS=latest'
+          elif [ -d "iosApp.xcodeproj" ]; then
+            xcodebuild test \
+              -project iosApp.xcodeproj \
+              -scheme "$SCHEME_NAME" \
+              -sdk iphonesimulator \
+              -destination 'platform=iOS Simulator,name=iPhone 14,OS=latest'
+          else
+            echo "No Xcode project or workspace found, skipping iOS tests."
+            exit 1
+          fi
