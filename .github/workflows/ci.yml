@@ -64,7 +64,7 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: iconic_scholar_452807_h3
+          project_id: iconic-scholar-452807-h3
 
       - name: Decode and Save Service Account Key to JSON
         run: |
