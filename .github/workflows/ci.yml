@@ -40,10 +40,14 @@ jobs:
       - name: Select Xcode version
         run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-      - name: Install dependencies
+      - name: Install dependencies (if Podfile exists)
         run: |
           cd iosApp
-          pod install
+          if [ -f "Podfile" ]; then
+            pod install
+          else
+            echo "No Podfile found, skipping pod install."
+          fi
 
       - name: Run iOS tests
         run: |
