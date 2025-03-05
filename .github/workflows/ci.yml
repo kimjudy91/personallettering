@@ -66,9 +66,9 @@ jobs:
         with:
           project_id: iconic-scholar-452807-h3
 
-      - name: Save Service Account Key to JSON
+      - name: Decode and Save Service Account Key to JSON
         run: |
-          echo "${{ secrets.GCP_SA_KEY }}" > $HOME/gcloud-key.json
+          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > $HOME/gcloud-key.json
 
       - name: Validate JSON Format
         run: |
