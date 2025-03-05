@@ -61,25 +61,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.GCP_SA_KEY }}"
+
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: iconic-scholar-452807-h3
-
-      - name: Decode and Save Service Account Key to JSON
-        run: |
-          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > $HOME/gcloud-key.json
-
-      - name: Validate JSON Format
-        run: |
-          cat $HOME/gcloud-key.json
-          jq . $HOME/gcloud-key.json > /dev/null || { echo "Invalid JSON format"; exit 1; }
-
-      - name: Authenticate with Google Cloud
-        run: |
-          gcloud auth activate-service-account --key-file=$HOME/gcloud-key.json
-          gcloud config set project iconic-scholar-452807-h3
-          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json
 
       - name: Upload iOS app to Firebase Test Lab
         run: |
