@@ -52,3 +52,24 @@ jobs:
       - name: Run iOS Kotlin Multiplatform tests
         run: |
           ./gradlew iosX64Test iosSimulatorArm64Test --warning-mode all
+
+  firebase-ios-test:
+    name: Firebase Test Lab (iOS)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Upload iOS app to Firebase Test Lab
+        run: |
+          gcloud firebase test ios run \
+            --test app.ipa \
+            --device model=iphone14,version=16.0,locale=en,orientation=portrait
